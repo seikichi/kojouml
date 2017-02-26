@@ -1,0 +1,12 @@
+*.js
+*.map
+
+tmp
+node_modules
+coverage
+.nyc_output
+npm-debug.log
+
+# Emacs
+*~
+\#*

@@ -1,0 +1,50 @@
+{
+  "name": "kojouml",
+  "description": "PlantUML javascript clone",
+  "version": "0.0.1",
+  "author": "Seikichi KONDO",
+  "bugs": {
+    "url": "https://github.com/seikichi/kojouml/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.5",
+    "@types/webpack": "^2.2.7",
+    "ava": "^0.18.2",
+    "awesome-typescript-loader": "^3.0.8",
+    "coveralls": "^2.11.16",
+    "del-cli": "^0.2.1",
+    "in-publish": "^2.0.0",
+    "mkdirp": "^0.5.1",
+    "npm-run-all": "^4.0.2",
+    "nyc": "^10.1.2",
+    "pegjs": "^0.10.0",
+    "pegjs-loader": "^0.5.0",
+    "ts-node": "^2.1.0",
+    "tslint": "^4.4.2",
+    "tslint-loader": "^3.4.2",
+    "typescript": "^2.2.1",
+    "webpack": "^2.2.1"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "homepage": "https://github.com/seikichi/kojouml#readme",
+  "keywords": [
+    "PlanUML",
+    "UML"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seikichi/kojouml.git"
+  },
+  "scripts": {
+    "build": "run-s -l clean build:scripts",
+    "build:scripts": "webpack",
+    "clean": "del-cli .nyc_output coverage src/**/*.js src/**/*.js.map test/**/*.js test/**/*.js.map",
+    "prepublish": "in-publish && run-s build || not-in-publish",
+    "test": "tsc && pegjs src/arithmetics.pegjs && nyc ava"
+  }
+}
