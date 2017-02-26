@@ -5,5 +5,5 @@ async function fn() {
 }
 
 test(async (t) => {
-  t.is(await fn(), "foo");
+  t.is(await fn(), 'foo');
 });

@@ -2,36 +2,14 @@
 // tslint:disable:object-literal-sort-keys
 
 import * as path from 'path';
-import { Configuration } from 'webpack';
+import * as merge from 'webpack-merge';
+import config from './webpack.config.shared';
 
-const config: Configuration = {
-  entry: './src/index.ts',
+export default merge(config, {
+  entry: path.join(__dirname, 'src', 'index.ts'),
   output: {
     path: path.resolve(__dirname, 'lib'),
     filename: 'index.js',
     libraryTarget: 'umd',
   },
-  resolve: {
-    extensions: ['.ts', '.pegjs'],
-  },
-  target: 'node',
-  module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        loader: 'awesome-typescript-loader',
-      },
-      {
-        test: /\.ts$/,
-        enforce: 'pre',
-        loader: 'tslint-loader',
-      },
-      {
-        test: /\.pegjs$/,
-        loader: 'pegjs-loader',
-      },
-    ],
-  },
-};
-
-module.exports = config;
+});

@@ -34,6 +34,17 @@
     ansi-styles "^2.2.1"
     esutils "^2.0.2"
 
+"@types/glob@^5.0.30":
+  version "5.0.30"
+  resolved "https://registry.yarnpkg.com/@types/glob/-/glob-5.0.30.tgz#1026409c5625a8689074602808d082b2867b8a51"
+  dependencies:
+    "@types/minimatch" "*"
+    "@types/node" "*"
+
+"@types/minimatch@*":
+  version "2.0.29"
+  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
+
 "@types/node@*", "@types/node@^7.0.5":
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.5.tgz#96a0f0a618b7b606f1ec547403c00650210bfbb7"
@@ -52,7 +63,13 @@
   dependencies:
     "@types/source-map" "*"
 
-"@types/webpack@^2.2.7":
+"@types/webpack-merge@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@types/webpack-merge/-/webpack-merge-0.0.4.tgz#7150eaa758591905fbbb157f88ea15cae35d1b6c"
+  dependencies:
+    "@types/webpack" "*"
+
+"@types/webpack@*", "@types/webpack@^2.2.7":
   version "2.2.7"
   resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-2.2.7.tgz#bf2e13f709e6bf0cbbbb8d7e7087e11d75624171"
   dependencies:
@@ -3741,6 +3758,16 @@ watchpack@^1.2.0:
     async "^2.1.2"
     chokidar "^1.4.3"
     graceful-fs "^4.1.2"
+
+webpack-merge@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-3.0.0.tgz#f2c9c28691bc44fdb124745cb84a8fab74125701"
+  dependencies:
+    lodash "^4.17.4"
+
+webpack-node-externals@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/webpack-node-externals/-/webpack-node-externals-1.5.4.tgz#ea05ba17108a23e776c35c42e7bb0e86c225be00"
 
 webpack-sources@^0.1.4:
   version "0.1.4"
