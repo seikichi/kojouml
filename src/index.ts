@@ -1,11 +1,8 @@
-const parser: any = require('./arithmetics');
-
-// const g = new Greeter('seikichi')
-// console.log(g.greet());
+import * as AST from './ast';
 
 const Kojo = {
   parse(str: string): any {
-    return parser.parse(str);
+    return AST.parse(str);
   },
 };
 

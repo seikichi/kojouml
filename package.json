@@ -57,9 +57,12 @@
     "build:scripts": "webpack",
     "clean": "del-cli .nyc_output coverage src/**/*.js src/**/*.js.map test/**/*.js test/**/*.js.map",
     "prepublish": "in-publish && run-s build || not-in-publish",
-    "test": "tsc && pegjs src/arithmetics.pegjs && nyc ava",
+    "test": "tsc && pegjs src/**/*.pegjs && nyc ava",
     "watch": "run-p -l watch:*",
     "watch:scripts": "webpack --watch --config=webpack.config.test.ts",
     "watch:test": "ava --watch"
+  },
+  "dependencies": {
+    "viz.js": "^1.7.0"
   }
 }
