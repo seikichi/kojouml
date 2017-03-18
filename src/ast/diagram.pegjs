@@ -18,7 +18,7 @@ NotNewline = !Newline c:. { return c; }
 Rawline = raw:(!Newline .)* nl:Newline { return mapByIndex(raw, 1).join('') + nl; }
 DoubleQuote = '"' / '\u201c' / '\u201d' / '\u00ab' / '\u00bb'
 DoubleQuotedString = DoubleQuote vs:(!DoubleQuote NotNewline)+ DoubleQuote {
-  return mapByIndex(vs, 1);
+  return mapByIndex(vs, 1).join('');
 }
 AlphaNumericAscii = [A-Za-z0-9]
 
@@ -55,15 +55,26 @@ LinkIdentifier = NonQuotedLinkIdentifier / DoubleQuotedString
 NonQuotedLinkIdentifier = LinkSeparator? AlphaNumericAscii+ (LinkSeparator AlphaNumericAscii+)* {
   return text();
 }
-Link = (
+LinkLabel = SP* ':' SP* cs:NotNewline+ { return cs.join(''); }
+Link =
   SP*
   lhs:LinkIdentifier
   SP*
   line:('-'+ / '.'+ / '='+)
   SP*
   rhs:LinkIdentifier
-) {
-  return { type: 'link' };
+  label:LinkLabel?
+{
+  return {
+    type: 'link',
+    left: {
+      name: lhs,
+    },
+    right: {
+      name: rhs,
+    },
+    label: label,
+  };
 }
 
 StereoType = '<<' cs:(!'>>' NotNewline)+ '>>' {

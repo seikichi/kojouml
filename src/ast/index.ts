@@ -35,21 +35,21 @@ export interface Namespace {
 
 export interface Link {
   type: 'link';
-  // left: {
-  //   name: string;
-  //   cardinality?: string;
-  //   head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#'
-  // };
-  // right: {
-  //   name: string;
-  //   cardinality?: string;
-  //   head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#'
-  // };
+  left: {
+    name: string;
+    // cardinality?: string;
+    // head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#'
+  };
+  right: {
+    name: string;
+    // cardinality?: string;
+    // head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#'
+  };
   // line: {
   //   char: '-' | '.' | '=';
   //   length: number;
   // }
-  // label?: string;
+  label?: string;
   // direction?: 'left' | 'right' | 'up' | 'down';
 }
 
