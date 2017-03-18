@@ -4,6 +4,7 @@
     "arrow-parens": false,
     "interface-name": false,
     "no-var-requires": false,
+    "object-literal-sort-keys": false,
     "quotemark": [true, "single", "avoid-escape"]
   }
 }
