@@ -5,10 +5,15 @@ export interface Diagram {
   children: Entity[];
 }
 
-export type Entity = Title | Class;
+export type Entity = Title | Caption | Class;
 
 export interface Title {
   type: 'title';
+  value: string;
+}
+
+export interface Caption {
+  type: 'caption';
   value: string;
 }
 

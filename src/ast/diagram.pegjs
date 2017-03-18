@@ -23,9 +23,9 @@ Diagram = es:Entity* Blanklines? {
   return { type: 'diagram', children: es };
 }
 
-Entity = Emptyline* e:(Title) { return e; }
-Title = MultilineTitle / SinglelineTitle
+Entity = Emptyline* e:(Title / Caption) { return e; }
 
+Title = MultilineTitle / SinglelineTitle
 SinglelineTitle = 'title' (SP* ':' SP* / SP+) &(SP* NotSpace) cs:NotNewline+ {
   return { type: 'title', value: cs.join('').replace('\\n', '\n') };
 }
@@ -36,4 +36,8 @@ MultilineTitle = MultilineTitleBegin vs:(!MultilineTitleEnd Rawline)+ MultilineT
     type: 'title',
     value: mapByIndex(vs, 1).join('').replace('\\n', '\n'),
   };
+}
+
+Caption = 'caption' (SP* ':' SP* / SP+) &(SP* NotSpace) cs:NotNewline+ {
+  return { type: 'caption', value: cs.join('').replace('\\n', '\n') };
 }
