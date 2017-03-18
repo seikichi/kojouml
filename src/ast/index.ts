@@ -5,7 +5,7 @@ export interface Diagram {
   children: Entity[];
 }
 
-export type Entity = Title | Caption | Class;
+export type Entity = Title | Caption | Link | Package | Namespace;
 
 export interface Title {
   type: 'title';
@@ -17,8 +17,40 @@ export interface Caption {
   value: string;
 }
 
-export interface Class {
-  type: 'class';
+export interface Package {
+  type: 'package';
+  name?: string;
+  stereotype?: string;
+  // color?: string;
+  children: Entity[];
+}
+
+export interface Namespace {
+  type: 'namespace';
+  name: string;
+  stereotype?: string;
+  // color?: string;
+  children: Entity[];
+}
+
+export interface Link {
+  type: 'link';
+  // left: {
+  //   name: string;
+  //   cardinality?: string;
+  //   head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#'
+  // };
+  // right: {
+  //   name: string;
+  //   cardinality?: string;
+  //   head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#'
+  // };
+  // line: {
+  //   char: '-' | '.' | '=';
+  //   length: number;
+  // }
+  // label?: string;
+  // direction?: 'left' | 'right' | 'up' | 'down';
 }
 
 export function parse(source: string): Diagram {

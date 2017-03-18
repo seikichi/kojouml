@@ -6,6 +6,7 @@
   "ava": {
     "require": [],
     "babel": {
+      "babelrc": false,
       "plugins": [],
       "presets": []
     }

@@ -16,21 +16,26 @@ Blanklines = (SP* Newline &(SP* Endline))* SP* Endline
 NotSpace = !SP !Newline c:. { return c; }
 NotNewline = !Newline c:. { return c; }
 Rawline = raw:(!Newline .)* nl:Newline { return mapByIndex(raw, 1).join('') + nl; }
+DoubleQuote = '"' / '\u201c' / '\u201d' / '\u00ab' / '\u00bb'
+DoubleQuotedString = DoubleQuote vs:(!DoubleQuote NotNewline)+ DoubleQuote {
+  return mapByIndex(vs, 1);
+}
+AlphaNumericAscii = [A-Za-z0-9]
 
 Header = Emptyline* SP* '@startuml' Emptyline
 Footer = SP* '@enduml' Blanklines?
-Diagram = es:Entity* Blanklines? {
-  return { type: 'diagram', children: es };
+Diagram = children:Entity* {
+  return { type: 'diagram', children: children };
 }
 
-Entity = Emptyline* e:(Title / Caption) { return e; }
+Entity = Emptyline* e:(Title / Caption / Link / Package / Namespace) Blanklines? { return e; }
 
 Title = MultilineTitle / SinglelineTitle
 SinglelineTitle = 'title' (SP* ':' SP* / SP+) &(SP* NotSpace) cs:NotNewline+ {
   return { type: 'title', value: cs.join('').replace('\\n', '\n') };
 }
 MultilineTitleBegin = 'title' Emptyline
-MultilineTitleEnd = 'end' SP+ 'title' Emptyline
+MultilineTitleEnd = 'end' SP+ 'title'
 MultilineTitle = MultilineTitleBegin vs:(!MultilineTitleEnd Rawline)+ MultilineTitleEnd {
   return {
     type: 'title',
@@ -40,4 +45,53 @@ MultilineTitle = MultilineTitleBegin vs:(!MultilineTitleEnd Rawline)+ MultilineT
 
 Caption = 'caption' (SP* ':' SP* / SP+) &(SP* NotSpace) cs:NotNewline+ {
   return { type: 'caption', value: cs.join('').replace('\\n', '\n') };
+}
+
+LinkSeparator = ('.' / '::' / '\\' / '\\\\' )
+LinkIdentifierKeywords = 'interface' / 'enum' / 'annotation' /
+  'abstract' SP+ 'class'/ 'abstract' / 'class' / 'object' / 'entity'
+
+LinkIdentifier = NonQuotedLinkIdentifier / DoubleQuotedString
+NonQuotedLinkIdentifier = LinkSeparator? AlphaNumericAscii+ (LinkSeparator AlphaNumericAscii+)* {
+  return text();
+}
+Link = (
+  SP*
+  lhs:LinkIdentifier
+  SP*
+  line:('-'+ / '.'+ / '='+)
+  SP*
+  rhs:LinkIdentifier
+) {
+  return { type: 'link' };
+}
+
+StereoType = '<<' cs:(!'>>' NotNewline)+ '>>' {
+  return mapByIndex(cs, 1).join('');
+}
+
+PackageName = vs:[^# {}]+ { return vs.join(''); } / DoubleQuotedString;
+Package =
+  SP* 'package' SP+ name:PackageName? SP* stereoType:StereoType? SP* '{' Emptyline
+  children:Entity* Blanklines?
+  SP* '}' {
+  return {
+    type: 'package',
+    name: name,
+    stereoType: stereoType,
+    children: children,
+  };
+}
+
+NamespaceName = h:[A-Za-z0-9_] t:[A-Za-z0-9_.:\\]* { return h + t.join(''); }
+Namespace =
+  SP* 'namespace' SP+ name:NamespaceName SP* stereoType:StereoType? SP* '{' Emptyline
+  children:Entity* Blanklines?
+  SP* '}' {
+  return {
+    type: 'namespace',
+    name: name,
+    stereoType: stereoType,
+    children: children,
+  };
 }
