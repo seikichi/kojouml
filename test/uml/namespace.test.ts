@@ -1,7 +1,7 @@
 import { test } from 'ava';
-import { diagramMacro } from './helper';
+import { umlMacro } from './helper';
 
-test(diagramMacro, `
+test(umlMacro, `
 namespace a {
   namespace b {
   }

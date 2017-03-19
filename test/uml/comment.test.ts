@@ -1,9 +1,9 @@
 import test from 'ava';
-import { diagramMacro } from './helper';
+import { umlMacro } from './helper';
 
-test(diagramMacro, "' comment", [{ type: 'comment', value: 'comment'}]);
-test(diagramMacro, "  '   comment", [{ type: 'comment', value: 'comment'}]);
-test(diagramMacro, `
+test(umlMacro, "' comment", [{ type: 'comment', value: 'comment'}]);
+test(umlMacro, "  '   comment", [{ type: 'comment', value: 'comment'}]);
+test(umlMacro, `
 /'
 Hello, world!
 Hello, world!

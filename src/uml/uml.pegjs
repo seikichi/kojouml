@@ -4,7 +4,7 @@
   };
 }
 
-Start = Header d:Diagram Footer { return d; } / Diagram
+Start = Header uml:UML Footer { return uml; } / UML
 
 // Common
 EOF = !. { return ''; }
@@ -25,8 +25,8 @@ Quote = "'" / '\u2018' / '\u2019'
 
 Header = Emptyline* SP* '@startuml' Emptyline
 Footer = SP* '@enduml' Blanklines?
-Diagram = children:Entity* {
-  return { type: 'diagram', children: children };
+UML = children:Entity* {
+  return { type: 'uml', children: children };
 }
 
 Entity = Emptyline* e:(Title / Caption / Link / Package / Namespace / Comment) Blanklines? { return e; }

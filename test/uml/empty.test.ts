@@ -1,6 +1,6 @@
 import { test } from 'ava';
-import { diagramMacro } from './helper';
+import { umlMacro } from './helper';
 
-test(diagramMacro, '', []);
-test(diagramMacro, '@startuml\n@enduml', []);
-test(diagramMacro, '@startuml\n@enduml\n', []);
+test(umlMacro, '', []);
+test(umlMacro, '@startuml\n@enduml', []);
+test(umlMacro, '@startuml\n@enduml\n', []);

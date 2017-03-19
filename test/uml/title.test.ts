@@ -1,9 +1,9 @@
 import test from 'ava';
-import { diagramMacro } from './helper';
+import { umlMacro } from './helper';
 
-test(diagramMacro, 'title Hello, world!\n', [{ type: 'title', value: 'Hello, world!'}]);
-test(diagramMacro, 'title line1\\nline2\n', [{ type: 'title', value: 'line1\nline2'}]);
-test(diagramMacro, `\
+test(umlMacro, 'title Hello, world!\n', [{ type: 'title', value: 'Hello, world!'}]);
+test(umlMacro, 'title line1\\nline2\n', [{ type: 'title', value: 'line1\nline2'}]);
+test(umlMacro, `\
 title
 Hello,
 world!

@@ -1,17 +1,17 @@
 import { test } from 'ava';
-import { diagramMacro } from './helper';
+import { umlMacro } from './helper';
 
-test(diagramMacro, `
+test(umlMacro, `
 package {
 }
 `, [{ type: 'package', name: null, stereoType: null, children: [] }]);
 
-test(diagramMacro, `
+test(umlMacro, `
 package p {
 }
 `, [{ type: 'package', name: 'p', stereoType: null, children: [] }]);
 
-test(diagramMacro, `
+test(umlMacro, `
 package p1 {
   package p2 {
     package p3 {

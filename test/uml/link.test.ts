@@ -1,14 +1,14 @@
 import test from 'ava';
-import { diagramMacro } from './helper';
+import { umlMacro } from './helper';
 
-test(diagramMacro, 'A -- B', [{
+test(umlMacro, 'A -- B', [{
   type: 'link',
   left: { name: 'A' },
   right: { name: 'B' },
   label: null,
 }]);
 
-test(diagramMacro, '"A A" -- " B" : Hello, world!', [{
+test(umlMacro, '"A A" -- " B" : Hello, world!', [{
   type: 'link',
   left: { name: 'A A' },
   right: { name: ' B' },
