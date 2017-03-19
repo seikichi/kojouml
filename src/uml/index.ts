@@ -1,11 +1,11 @@
-const Diagram: any = require('./diagram');
+const uml: any = require('./uml');
 
-export interface Diagram {
+export interface UML {
   type: 'diagram';
   children: Entity[];
 }
 
-export type Entity = Title | Caption | Link | Package | Namespace;
+export type Entity = Title | Caption | Link | Package | Namespace | Comment;
 
 export interface Title {
   type: 'title';
@@ -33,6 +33,11 @@ export interface Namespace {
   children: Entity[];
 }
 
+export interface Comment {
+  type: 'comment';
+  value: string;
+}
+
 export interface Link {
   type: 'link';
   left: {
@@ -53,6 +58,6 @@ export interface Link {
   // direction?: 'left' | 'right' | 'up' | 'down';
 }
 
-export function parse(source: string): Diagram {
-  return Diagram.parse(source);
+export function parse(source: string): UML {
+  return uml.parse(source);
 }

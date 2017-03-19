@@ -21,6 +21,7 @@ DoubleQuotedString = DoubleQuote vs:(!DoubleQuote NotNewline)+ DoubleQuote {
   return mapByIndex(vs, 1).join('');
 }
 AlphaNumericAscii = [A-Za-z0-9]
+Quote = "'" / '\u2018' / '\u2019'
 
 Header = Emptyline* SP* '@startuml' Emptyline
 Footer = SP* '@enduml' Blanklines?
@@ -28,7 +29,7 @@ Diagram = children:Entity* {
   return { type: 'diagram', children: children };
 }
 
-Entity = Emptyline* e:(Title / Caption / Link / Package / Namespace) Blanklines? { return e; }
+Entity = Emptyline* e:(Title / Caption / Link / Package / Namespace / Comment) Blanklines? { return e; }
 
 Title = MultilineTitle / SinglelineTitle
 SinglelineTitle = 'title' (SP* ':' SP* / SP+) &(SP* NotSpace) cs:NotNewline+ {
@@ -36,7 +37,7 @@ SinglelineTitle = 'title' (SP* ':' SP* / SP+) &(SP* NotSpace) cs:NotNewline+ {
 }
 MultilineTitleBegin = 'title' Emptyline
 MultilineTitleEnd = 'end' SP+ 'title'
-MultilineTitle = MultilineTitleBegin vs:(!MultilineTitleEnd Rawline)+ MultilineTitleEnd {
+MultilineTitle = MultilineTitleBegin vs:(!MultilineTitleEnd .)+ MultilineTitleEnd {
   return {
     type: 'title',
     value: mapByIndex(vs, 1).join('').replace('\\n', '\n'),
@@ -104,5 +105,18 @@ Namespace =
     name: name,
     stereoType: stereoType,
     children: children,
+  };
+}
+
+Comment = MultilineComment / SinglelineComment
+SinglelineComment = SP* Quote SP* cs:NotNewline+ {
+  return { type: 'comment', value: cs.join('') };
+}
+MultilineCommentBegin = SP* '/' Quote
+MultilineCommentEnd = Quote '/'
+MultilineComment = MultilineCommentBegin vs:(!MultilineCommentEnd .)+ MultilineCommentEnd {
+  return {
+    type: 'comment',
+    value: mapByIndex(vs, 1).join('').replace('\\n', '\n'),
   };
 }

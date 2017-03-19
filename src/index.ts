@@ -1,8 +1,8 @@
-import * as AST from './ast';
+import * as uml from './uml';
 
 const Kojo = {
   parse(str: string): any {
-    return AST.parse(str);
+    return uml.parse(str);
   },
 };
 
