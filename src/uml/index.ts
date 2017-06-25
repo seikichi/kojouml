@@ -1,7 +1,7 @@
 const uml: any = require('./uml');
 
 export interface UML {
-  type: 'diagram';
+  type: 'uml';
   children: Entity[];
 }
 

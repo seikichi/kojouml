@@ -15,6 +15,7 @@
   },
   "exclude": [
     "node_modules",
-    "webpack.*.ts"
+    "webpack.*.ts",
+    "tmp"
   ]
 }

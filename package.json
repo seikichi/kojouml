@@ -3,33 +3,31 @@
   "description": "PlantUML javascript clone",
   "version": "0.0.1",
   "author": "Seikichi KONDO",
-  "ava": {
-    "require": [],
-    "babel": {
-      "babelrc": false,
-      "plugins": [],
-      "presets": []
-    }
-  },
   "bugs": {
     "url": "https://github.com/seikichi/kojouml/issues"
   },
+  "dependencies": {
+    "viz.js": "^1.7.0"
+  },
   "devDependencies": {
     "@types/glob": "^5.0.30",
+    "@types/jest": "^20.0.2",
     "@types/node": "^7.0.5",
     "@types/webpack": "^2.2.7",
     "@types/webpack-merge": "^0.0.4",
-    "ava": "^0.18.2",
     "awesome-typescript-loader": "^3.0.8",
     "coveralls": "^2.11.16",
     "del-cli": "^0.2.1",
     "glob": "^7.1.1",
     "in-publish": "^2.0.0",
+    "jest": "^20.0.4",
     "mkdirp": "^0.5.1",
     "npm-run-all": "^4.0.2",
     "nyc": "^10.1.2",
     "pegjs": "^0.10.0",
     "pegjs-loader": "^0.5.0",
+    "prettier": "^1.4.4",
+    "ts-jest": "^20.0.6",
     "ts-node": "^2.1.0",
     "tslint": "^4.4.2",
     "tslint-loader": "^3.4.2",
@@ -43,6 +41,19 @@
     "lib"
   ],
   "homepage": "https://github.com/seikichi/kojouml#readme",
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*\\.(ts|tsx|js)"
+    ]
+  },
   "keywords": [
     "PlanUML",
     "UML"
@@ -57,13 +68,9 @@
     "build": "run-s -l clean build:scripts",
     "build:scripts": "webpack",
     "clean": "del-cli .nyc_output coverage src/**/*.js src/**/*.js.map test/**/*.js test/**/*.js.map",
+    "format": "prettier --single-quote --trailing-comma all test/hello.test.ts --write '{src,test}/**/*.ts'",
     "prepublish": "in-publish && run-s build || not-in-publish",
-    "test": "tsc && pegjs src/**/*.pegjs && nyc ava",
     "watch": "run-p -l watch:*",
-    "watch:scripts": "webpack --watch --config=webpack.config.test.ts",
-    "watch:test": "ava --watch"
-  },
-  "dependencies": {
-    "viz.js": "^1.7.0"
+    "watch:scripts": "webpack --watch --config=webpack.config.test.ts"
   }
 }
