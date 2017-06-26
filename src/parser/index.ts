@@ -5,7 +5,7 @@ export function parse(source: string): Diagram {
 }
 
 export interface Diagram {
-  children: Element[];
+  children: ReadonlyArray<Element>;
 }
 
 export type Element = Title | Caption | Comment | Link;
@@ -25,26 +25,40 @@ export interface Comment {
   value: string;
 }
 
-export interface Link {
-  type: 'link';
+export type Node = EntityNode;
+
+export interface EntityNode {
+  type: 'entity';
+  value: string;
 }
 
-// export interface Link {
-//   type: 'link';
-//   left: {
-//     name: string;
-//     // cardinality?: string;
-//     // head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#'
-//   };
-//   right: {
-//     name: string;
-//     // cardinality?: string;
-//     // head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#'
-//   };
-//   // line: {
-//   //   char: '-' | '.' | '=';
-//   //   length: number;
-//   // }
-//   label?: string;
-//   // direction?: 'left' | 'right' | 'up' | 'down';
-// }
+export interface Link {
+  type: 'link';
+  left: {
+    node: Node;
+    cardinality?: string;
+    head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#';
+  };
+  right: {
+    node: Node;
+    cardinality?: string;
+    head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#';
+  };
+  line: {
+    char: '-' | '.' | '=';
+    length: number;
+    direction?:
+      | 'left'
+      | 'le'
+      | 'l'
+      | 'right'
+      | 'ri'
+      | 'r'
+      | 'up'
+      | 'u'
+      | 'down'
+      | 'do'
+      | 'd';
+  };
+  label?: string;
+}

@@ -30,7 +30,7 @@ Footer = SP* '@enduml' Blanklines?
 Diagram = children:Element* {
   return { children: children };
 }
-Element = Emptyline* e:(Title / Caption / Comment) Blanklines? { return e; }
+Element = Emptyline* e:(Title / Caption / Comment / Link) Blanklines? { return e; }
 
 // Title
 Title = MultilineTitle / SinglelineTitle
@@ -65,64 +65,56 @@ MultilineComment = MultilineCommentBegin vs:(!MultilineCommentEnd .)+ MultilineC
   };
 }
 
-// Entity = Emptyline* e:(Title / Caption / Link / Package / Namespace / Comment) Blanklines? { return e; }
+// Link
+Link =
+  SP*
+  ln:Node
+  lc:Cardinality?
+  SP*
+  lh:LeftHead?
+  line:Line
+  rh:RightHead?
+  rc:Cardinality?
+  SP*
+  rn:Node
+  label:LinkLabel?
+{
+  return {
+    type: 'link',
+    left: {
+      node: ln,
+      cardinality: lc || undefined,
+      head: lh || undefined,
+    },
+    right: {
+      node: rn,
+      cardinality: rc || undefined,
+      head: rh || undefined,
+    },
+    line: line,
+    label: label || undefined,
+  };
+}
+LinkLabel = SP* ':' SP* cs:NotNewline+ { return cs.join(''); }
+Cardinality = SP+ str:DoubleQuotedString SP+ { return str; }
+LeftHead = '<|' / '<' / '^' / '+' / 'o' / 'x' / '*' / '#';
+RightHead = '|>' / '>' / '^' / '+' / 'o' / 'x' / '*' / '#';
+LineDirection = 'left' / 'le' / 'l' / 'right' / 'ri' / 'r' / 'up' / 'u' / 'down' / 'do' / 'd'
+SimpleLine = line:('-'+ / '.'+ / '='+) {
+  return {
+    char: line[0],
+    length: line.length,
+  };
+}
+LineWithDirection = left:('-'+ / '.'+ / '='+) dir:LineDirection right:('-'+ / '.'+ / '='+) {
+  return {
+    char: left[0],
+    length: left.length + right.length,
+    direction: dir,
+  };
+}
+Line = LineWithDirection / SimpleLine
 
-// LinkSeparator = ('.' / '::' / '\\' / '\\\\' )
-// LinkIdentifierKeywords = 'interface' / 'enum' / 'annotation' /
-//   'abstract' SP+ 'class'/ 'abstract' / 'class' / 'object' / 'entity'
-
-// LinkIdentifier = NonQuotedLinkIdentifier / DoubleQuotedString
-// NonQuotedLinkIdentifier = LinkSeparator? AlphaNumericAscii+ (LinkSeparator AlphaNumericAscii+)* {
-//   return text();
-// }
-// LinkLabel = SP* ':' SP* cs:NotNewline+ { return cs.join(''); }
-// Link =
-//   SP*
-//   lhs:LinkIdentifier
-//   SP*
-//   line:('-'+ / '.'+ / '='+)
-//   SP*
-//   rhs:LinkIdentifier
-//   label:LinkLabel?
-// {
-//   return {
-//     type: 'link',
-//     left: {
-//       name: lhs,
-//     },
-//     right: {
-//       name: rhs,
-//     },
-//     label: label,
-//   };
-// }
-
-// StereoType = '<<' cs:(!'>>' NotNewline)+ '>>' {
-//   return mapByIndex(cs, 1).join('');
-// }
-
-// PackageName = vs:[^# {}]+ { return vs.join(''); } / DoubleQuotedString;
-// Package =
-//   SP* 'package' SP+ name:PackageName? SP* stereoType:StereoType? SP* '{' Emptyline
-//   children:Entity* Blanklines?
-//   SP* '}' {
-//   return {
-//     type: 'package',
-//     name: name,
-//     stereoType: stereoType,
-//     children: children,
-//   };
-// }
-
-// NamespaceName = h:[A-Za-z0-9_] t:[A-Za-z0-9_.:\\]* { return h + t.join(''); }
-// Namespace =
-//   SP* 'namespace' SP+ name:NamespaceName SP* stereoType:StereoType? SP* '{' Emptyline
-//   children:Entity* Blanklines?
-//   SP* '}' {
-//   return {
-//     type: 'namespace',
-//     name: name,
-//     stereoType: stereoType,
-//     children: children,
-//   };
-// }
+Node = AlphaNumericAscii+ {
+  return { type: 'entity', value: text() };
+}
