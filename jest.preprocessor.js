@@ -7,7 +7,10 @@ module.exports = {
     if (path.endsWith('.ts') || path.endsWith('.tsx')) {
       return ts.transpile(src, config.compilerOptions, path, []);
     } else if (path.endsWith('.pegjs')) {
-      return pegjs.generate(src, { format: 'commonjs', exportVar: null, optimize: 'speed', output: 'source' });
+      return pegjs.generate(src, {
+        optimize: 'speed',
+        output: 'source',
+      });
     }
     return src;
   },

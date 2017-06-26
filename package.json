@@ -23,7 +23,6 @@
     "jest": "^20.0.4",
     "mkdirp": "^0.5.1",
     "npm-run-all": "^4.0.2",
-    "nyc": "^10.1.2",
     "pegjs": "^0.10.0",
     "pegjs-loader": "^0.5.0",
     "prettier": "^1.4.4",
