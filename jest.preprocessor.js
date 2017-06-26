@@ -8,8 +8,12 @@ module.exports = {
       return ts.transpile(src, config.compilerOptions, path, []);
     } else if (path.endsWith('.pegjs')) {
       return pegjs.generate(src, {
+        cache: false,
+        format: 'commonjs',
+        exportVar: null,
         optimize: 'speed',
         output: 'source',
+        trace: false,
       });
     }
     return src;
