@@ -1,11 +1,52 @@
-import { Diagram } from '../parser';
+import * as _ from 'lodash';
+import * as parser from '../parser';
+// import * as R from 'ramda';
 
-interface Context {
-  nodes: { [ident: string]: Node };
+export function show(_graph: Graph): string {
+  return '';
 }
 
-export function fromDiagram(_: Diagram): Graph {
-  return {
+function indexNodeId(d: parser.Diagram): { [ident: string]: string } {
+  let counter = 0;
+  return _.reduce(
+    d.children,
+    (ids: { [indent: string]: string }, elem: parser.Element) => {
+      if (elem.type === 'class') {
+        return { ...ids, [elem.name]: `sh${++counter}` };
+      }
+      return ids;
+    },
+    {},
+  );
+}
+
+function process(
+  elem: parser.Element,
+  graph: Graph,
+  ids: { [ident: string]: string },
+): Graph {
+  switch (elem.type) {
+    case 'class':
+      graph.nodes.push({
+        id: ids[elem.name],
+        attributes: { label: elem.name },
+      });
+      return graph;
+    case 'link':
+      graph.edges.push({
+        lhs: ids[elem.left.node.value],
+        rhs: ids[elem.right.node.value],
+        attributes: {},
+      });
+      return graph;
+    default:
+      return graph;
+  }
+}
+
+export function fromDiagram(d: parser.Diagram): Graph {
+  const diagram = parser.normalize(d);
+  const graph: Graph = {
     type: 'digraph',
     id: 'unix',
     attributes: {
@@ -13,12 +54,17 @@ export function fromDiagram(_: Diagram): Graph {
       node: {},
       edge: {},
     },
-    nodes: [
-      { id: 'shape0004', attributes: { label: 'A' } },
-      { id: 'shape0005', attributes: { label: 'B' } },
-    ],
-    edges: [{ lhs: 'shape0004', rhs: 'shape0005', attributes: {} }],
+    nodes: [],
+    edges: [],
   };
+  const ids = indexNodeId(diagram);
+  return _.reduce(
+    diagram.children,
+    (graph, elem) => {
+      return process(elem, graph, ids);
+    },
+    graph,
+  );
 }
 
 export interface Graph {

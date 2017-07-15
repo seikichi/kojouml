@@ -1,6 +1,6 @@
-import * as parser from '../../src/parser';
+import { Diagram, parse } from '.';
 
-const tests: [string, string, parser.Diagram][] = [
+const tests: [string, string, Diagram][] = [
   [
     'simple title',
     'title Hello, world!\n',
@@ -24,5 +24,5 @@ end title
 ];
 
 tests.forEach(([name, source, expected]) => {
-  test(name, () => expect(parser.parse(source)).toEqual(expected));
+  test(name, () => expect(parse(source)).toEqual(expected));
 });

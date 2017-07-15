@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 const parser: any = require('./parser');
 
 export function parse(source: string): Diagram {
@@ -5,49 +6,49 @@ export function parse(source: string): Diagram {
 }
 
 export interface Diagram {
-  children: ReadonlyArray<Element>;
+  readonly children: ReadonlyArray<Element>;
 }
 
-export type Element = Title | Caption | Comment | Link;
+export type Element = Title | Caption | Comment | Link | Class;
 
 export interface Title {
-  type: 'title';
-  value: string;
+  readonly type: 'title';
+  readonly value: string;
 }
 
 export interface Caption {
-  type: 'caption';
-  value: string;
+  readonly type: 'caption';
+  readonly value: string;
 }
 
 export interface Comment {
-  type: 'comment';
-  value: string;
+  readonly type: 'comment';
+  readonly value: string;
 }
 
-export type Node = EntityNode;
+export type Node = IdentNode;
 
-export interface EntityNode {
-  type: 'entity';
-  value: string;
+export interface IdentNode {
+  readonly type: 'ident';
+  readonly value: string;
 }
 
 export interface Link {
-  type: 'link';
-  left: {
-    node: Node;
-    cardinality?: string;
-    head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#';
+  readonly type: 'link';
+  readonly left: {
+    readonly node: Node;
+    readonly cardinality?: string;
+    readonly head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#';
   };
-  right: {
-    node: Node;
-    cardinality?: string;
-    head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#';
+  readonly right: {
+    readonly node: Node;
+    readonly cardinality?: string;
+    readonly head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#';
   };
-  line: {
-    char: '-' | '.' | '=';
-    length: number;
-    direction?:
+  readonly line: {
+    readonly char: '-' | '.' | '=';
+    readonly length: number;
+    readonly direction?:
       | 'left'
       | 'le'
       | 'l'
@@ -60,5 +61,10 @@ export interface Link {
       | 'do'
       | 'd';
   };
-  label?: string;
+  readonly label?: string;
+}
+
+export interface Class {
+  readonly type: 'class';
+  readonly name: string;
 }

@@ -116,5 +116,5 @@ LineWithDirection = left:('-'+ / '.'+ / '='+) dir:LineDirection right:('-'+ / '.
 Line = LineWithDirection / SimpleLine
 
 Node = AlphaNumericAscii+ {
-  return { type: 'entity', value: text() };
+  return { type: 'ident', value: text() };
 }
