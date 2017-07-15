@@ -1,95 +1,51 @@
+import * as diagram from '../diagram';
 import * as _ from 'lodash';
-import * as parser from '../parser';
-// import * as R from 'ramda';
 
-export function show(_graph: Graph): string {
-  return '';
+export function show(graph: Graph): string {
+  const nodes = graph.nodes.map(node => `${node.id} [];`);
+  const edges = graph.edges.map(edge => `${edge.left} -> ${edge.right} [];`);
+  return ['digraph {', ...nodes, ...edges, '}'].join('\n');
 }
 
-function indexNodeId(d: parser.Diagram): { [ident: string]: string } {
-  let counter = 0;
-  return _.reduce(
-    d.children,
-    (ids: { [indent: string]: string }, elem: parser.Element) => {
-      if (elem.type === 'class') {
-        return { ...ids, [elem.name]: `sh${++counter}` };
-      }
-      return ids;
-    },
-    {},
-  );
+export function from(d: diagram.Diagram): Graph {
+  const type = 'digraph';
+  const edges = _.chain(d.links)
+    .map((link: diagram.Link): Edge => ({
+      left: link.left.id,
+      right: link.right.id,
+    }))
+    .value();
+  const nodes = _.chain(d.children)
+    .map(({ id }: diagram.Element): Node => ({ id }))
+    .value();
+
+  return { type, nodes, edges };
 }
 
-function process(
-  elem: parser.Element,
-  graph: Graph,
-  ids: { [ident: string]: string },
-): Graph {
-  switch (elem.type) {
-    case 'class':
-      graph.nodes.push({
-        id: ids[elem.name],
-        attributes: { label: elem.name },
-      });
-      return graph;
-    case 'link':
-      graph.edges.push({
-        lhs: ids[elem.left.node.value],
-        rhs: ids[elem.right.node.value],
-        attributes: {},
-      });
-      return graph;
-    default:
-      return graph;
-  }
-}
-
-export function fromDiagram(d: parser.Diagram): Graph {
-  const diagram = parser.normalize(d);
-  const graph: Graph = {
-    type: 'digraph',
-    id: 'unix',
-    attributes: {
-      graph: {},
-      node: {},
-      edge: {},
-    },
-    nodes: [],
-    edges: [],
-  };
-  const ids = indexNodeId(diagram);
-  return _.reduce(
-    diagram.children,
-    (graph, elem) => {
-      return process(elem, graph, ids);
-    },
-    graph,
-  );
-}
+export type Id = string;
 
 export interface Graph {
-  type: 'graph' | 'digraph';
-  id: string;
-  attributes: {
-    graph: Attributes;
-    node: Attributes;
-    edge: Attributes;
+  readonly type: 'digraph';
+  readonly attributes?: {
+    readonly graph?: Attributes;
+    readonly node?: Attributes;
+    readonly edge?: Attributes;
   };
-  nodes: Node[];
-  edges: Edge[];
-}
-
-export interface Node {
-  id: string;
-  attributes: Attributes;
+  readonly nodes: Node[];
+  readonly edges: Edge[];
 }
 
 export interface Edge {
-  lhs: string;
-  rhs: string;
-  attributes: Attributes;
+  readonly left: Id;
+  readonly right: Id;
+  readonly attributes?: Attributes;
+}
+
+export interface Node {
+  readonly id: Id;
+  readonly attributes?: Attributes;
 }
 
 export interface Attributes {
-  [key: string]: string | number;
+  readonly [key: string]: string | number;
 }

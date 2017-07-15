@@ -20,10 +20,50 @@ const tests: [string, string, diagram.Diagram][] = [
       ],
     },
   ],
+  [
+    'multiple links',
+    `
+A -- B
+B -- C
+C -- A
+C -- D
+`,
+    {
+      type: 'class_diagram',
+      children: [
+        { type: 'class', id: 'A', name: 'A' },
+        { type: 'class', id: 'B', name: 'B' },
+        { type: 'class', id: 'C', name: 'C' },
+        { type: 'class', id: 'D', name: 'D' },
+      ],
+      links: [
+        {
+          type: 'link',
+          left: { id: 'A' },
+          right: { id: 'B' },
+        },
+        {
+          type: 'link',
+          left: { id: 'B' },
+          right: { id: 'C' },
+        },
+        {
+          type: 'link',
+          left: { id: 'C' },
+          right: { id: 'A' },
+        },
+        {
+          type: 'link',
+          left: { id: 'C' },
+          right: { id: 'D' },
+        },
+      ],
+    },
+  ],
 ];
 
 tests.forEach(([name, source, expected]) => {
-  test.skip(name, () =>
+  test(name, () =>
     expect(diagram.from(parser.parse(source))).toEqual(expected),
   );
 });
