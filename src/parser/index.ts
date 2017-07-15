@@ -1,5 +1,4 @@
-import * as _ from 'lodash';
-const parser: any = require('./parser');
+const parser: { parse: (source: string) => Diagram } = require('./parser');
 
 export function parse(source: string): Diagram {
   return parser.parse(source);
