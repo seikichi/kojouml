@@ -5,13 +5,16 @@ const tests: [string, Graph, string][] = [
     'simple graph',
     {
       type: 'digraph',
-      nodes: [{ id: 'A' }, { id: 'B' }],
-      edges: [{ left: 'A', right: 'B' }],
+      nodes: [
+        { id: 'A', attributes: { shape: 'record' } },
+        { id: 'B', attributes: { shape: 'record' } },
+      ],
+      edges: [{ left: 'A', right: 'B', attributes: {} }],
     },
     `
 digraph {
-  A [];
-  B [];
+  A [shape="record"];
+  B [shape="record"];
   A -> B [];
 }
 `,

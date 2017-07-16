@@ -2,14 +2,16 @@ import * as parser from '../parser';
 import * as diagram from '../diagram';
 import * as dot from '.';
 
+const { objectContaining } = expect;
+
 const tests: [string, string, dot.Graph][] = [
   [
     'simple link',
     'A -- B',
     {
       type: 'digraph',
-      nodes: [{ id: 'A' }, { id: 'B' }],
-      edges: [{ left: 'A', right: 'B' }],
+      nodes: [objectContaining({ id: 'A' }), objectContaining({ id: 'B' })],
+      edges: [objectContaining({ left: 'A', right: 'B' })],
     },
   ],
 ];
