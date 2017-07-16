@@ -43,10 +43,13 @@ function showAttribuets(attrs: Attributes): string {
 }
 
 function elemToNode(elem: diagram.Element): Node {
+  const methods = elem.methods.map(e => e.name);
+  const fields = elem.fields.map(f => f.name);
   return {
     id: elem.id,
     attributes: {
       shape: 'record',
+      label: `{${elem.id}|${fields.join('\\l')}|${methods.join('\\l')}}`,
     },
   };
 }
