@@ -2,13 +2,8 @@ import * as _ from 'lodash';
 import * as diagram from '../diagram';
 
 export function show(graph: Graph): string {
-  const nodes = graph.nodes.map(
-    node => `${node.id} [${showAttribuets(node.attributes)}];`,
-  );
-  const edges = graph.edges.map(
-    edge =>
-      `${edge.left} -> ${edge.right} [${showAttribuets(edge.attributes)}];`,
-  );
+  const nodes = graph.nodes.map(showNode);
+  const edges = graph.edges.map(showEdge);
   return ['digraph {', ...nodes, ...edges, '}'].join('\n');
 }
 
@@ -24,6 +19,15 @@ export function from(d: diagram.Diagram): Graph {
   const nodes = _.chain(d.children).map(elemToNode).value();
 
   return { type, nodes, edges };
+}
+
+function showNode(node: Node): string {
+  return `${node.id} [${showAttribuets(node.attributes)}];`;
+}
+
+function showEdge(edge: Edge): string {
+  const { left, right, attributes } = edge;
+  return `${left} -> ${right} [${showAttribuets(attributes)}];`;
 }
 
 function showAttribuets(attrs: Attributes): string {
