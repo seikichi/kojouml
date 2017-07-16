@@ -23,12 +23,19 @@ export function from(d: parser.Diagram): Diagram {
 
 function mergeElemAndIds(vs: Array<[Element, number]>): [Element, number] {
   return [
-    _.chain(vs)
-      .map(v => v[0])
-      .reduce((ret: Element, elem) => Object.assign({}, ret, elem))
-      .value(),
+    _.chain(vs).map(v => v[0]).reduce(mergeClass).value(),
     _.min(_.map(vs, v => v[1])) as number,
   ];
+}
+
+function mergeClass(left: Class, right: Class): Class {
+  return {
+    type: 'class',
+    id: right.id || left.id,
+    name: right.name || left.name,
+    methods: _.uniqBy([...right.methods, ...left.methods], 'name'),
+    fields: _.uniqBy([...right.fields, ...left.fields], 'name'),
+  };
 }
 
 function convertLink(e: parser.Link): Link {
@@ -41,12 +48,22 @@ function convertLink(e: parser.Link): Link {
 
 function expand(elem: parser.Element): Element[] {
   switch (elem.type) {
+    case 'class':
+      return [
+        {
+          type: 'class',
+          id: elem.name,
+          name: elem.name,
+          methods: elem.methods,
+          fields: elem.fields,
+        },
+      ];
     case 'link':
       const left = elem.left.node.value;
       const right = elem.right.node.value;
       return [
-        { type: 'class', id: left, name: left },
-        { type: 'class', id: right, name: right },
+        { type: 'class', id: left, name: left, methods: [], fields: [] },
+        { type: 'class', id: right, name: right, methods: [], fields: [] },
       ];
     default:
       return [];
@@ -62,10 +79,20 @@ export interface ClassDiagram {
   readonly links: ReadonlyArray<Link>;
 }
 
+export interface Method {
+  readonly name: string;
+}
+
+export interface Field {
+  readonly name: string;
+}
+
 export interface Class {
   readonly type: 'class';
   readonly id: Id;
   readonly name: string;
+  readonly methods: ReadonlyArray<Method>;
+  readonly fields: ReadonlyArray<Field>;
 }
 
 export interface Link {

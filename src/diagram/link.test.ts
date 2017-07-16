@@ -1,6 +1,8 @@
 import * as parser from '../parser';
 import * as diagram from '.';
 
+const { objectContaining } = expect;
+
 const tests: [string, string, diagram.Diagram][] = [
   [
     'simple link',
@@ -8,8 +10,8 @@ const tests: [string, string, diagram.Diagram][] = [
     {
       type: 'class_diagram',
       children: [
-        { type: 'class', id: 'A', name: 'A' },
-        { type: 'class', id: 'B', name: 'B' },
+        objectContaining({ type: 'class', id: 'A', name: 'A' }),
+        objectContaining({ type: 'class', id: 'B', name: 'B' }),
       ],
       links: [
         {
@@ -31,10 +33,10 @@ C -- D
     {
       type: 'class_diagram',
       children: [
-        { type: 'class', id: 'A', name: 'A' },
-        { type: 'class', id: 'B', name: 'B' },
-        { type: 'class', id: 'C', name: 'C' },
-        { type: 'class', id: 'D', name: 'D' },
+        objectContaining({ type: 'class', id: 'A', name: 'A' }),
+        objectContaining({ type: 'class', id: 'B', name: 'B' }),
+        objectContaining({ type: 'class', id: 'C', name: 'C' }),
+        objectContaining({ type: 'class', id: 'D', name: 'D' }),
       ],
       links: [
         {
