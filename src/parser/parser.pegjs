@@ -30,7 +30,7 @@ Footer = SP* '@enduml' Blanklines?
 Diagram = children:Element* {
   return { children: children };
 }
-Element = Emptyline* e:(Title / Caption / Comment / Link) Blanklines? { return e; }
+Element = Emptyline* e:(Title / Caption / Comment / Member / Link) Blanklines? { return e; }
 
 // Title
 Title = MultilineTitle / SinglelineTitle
@@ -62,6 +62,27 @@ MultilineComment = MultilineCommentBegin vs:(!MultilineCommentEnd .)+ MultilineC
   return {
     type: 'comment',
     value: mapByIndex(vs, 1).join(''),
+  };
+}
+
+// Member
+Member = MemberMethod / MemberField
+
+MemberMethod = klass:AlphaNumericAscii+ SP* ':' SP* &((!Newline !'(' .)* '(') name:NotNewline+ {
+  return {
+    type: 'class',
+    name: klass.join(''),
+    methods: [{ name: name.join('') }],
+    fields: [],
+  };
+}
+
+MemberField = klass:AlphaNumericAscii+ SP* ':' SP* name:NotNewline+ {
+  return {
+    type: 'class',
+    name: klass.join(''),
+    methods: [],
+    fields: [{ name: name.join('') }],
   };
 }
 

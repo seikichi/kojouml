@@ -1,5 +1,5 @@
-import * as diagram from '../diagram';
 import * as _ from 'lodash';
+import * as diagram from '../diagram';
 
 export function show(graph: Graph): string {
   const nodes = graph.nodes.map(node => `${node.id} [];`);

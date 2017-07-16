@@ -63,7 +63,17 @@ export interface Link {
   readonly label?: string;
 }
 
+export interface Method {
+  readonly name: string;
+}
+
+export interface Field {
+  readonly name: string;
+}
+
 export interface Class {
   readonly type: 'class';
   readonly name: string;
+  readonly methods: ReadonlyArray<Method>;
+  readonly fields: ReadonlyArray<Field>;
 }

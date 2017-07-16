@@ -1,5 +1,5 @@
-import * as parser from '../parser';
 import * as _ from 'lodash';
+import * as parser from '../parser';
 
 export function from(d: parser.Diagram): Diagram {
   const type = 'class_diagram';
@@ -21,10 +21,10 @@ export function from(d: parser.Diagram): Diagram {
   return { type, children, links };
 }
 
-function mergeElemAndIds(vs: [Element, number][]): [Element, number] {
+function mergeElemAndIds(vs: Array<[Element, number]>): [Element, number] {
   return [
     _.chain(vs)
-      .map(vs => vs[0])
+      .map(v => v[0])
       .reduce((ret: Element, elem) => Object.assign({}, ret, elem))
       .value(),
     _.min(_.map(vs, v => v[1])) as number,

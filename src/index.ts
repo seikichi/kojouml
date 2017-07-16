@@ -1,6 +1,6 @@
-import * as parser from './parser';
 import * as diagram from './diagram';
 import * as dot from './dot';
+import * as parser from './parser';
 const Viz: (source: string) => string = require('viz.js');
 
 const Kojo = {
