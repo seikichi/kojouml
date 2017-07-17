@@ -31,11 +31,11 @@ ArrayList : size()
         },
       ],
       links: [
-        {
+        objectContaining({
           type: 'link',
           left: objectContaining({ id: 'Object' }),
           right: objectContaining({ id: 'ArrayList' }),
-        },
+        }),
       ],
     },
   ],

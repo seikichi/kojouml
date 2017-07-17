@@ -51,6 +51,10 @@ function convertLink(e: parser.Link): Link {
       head: e.right.head,
       cardinality: e.right.cardinality,
     },
+    line: {
+      char: e.line.char,
+      length: e.line.length,
+    },
     label: e.label,
   };
 }
@@ -127,6 +131,10 @@ export interface Link {
     readonly cardinality?: string;
     readonly head?: LinkRightHead;
   };
+  readonly line: {
+    readonly char: '-' | '.' | '=';
+    readonly length: number;
+  };
   readonly label?: string;
 }
 
@@ -137,6 +145,10 @@ export const defaultLink: Link = {
   },
   right: {
     id: '',
+  },
+  line: {
+    char: '-',
+    length: 1,
   },
 };
 

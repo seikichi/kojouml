@@ -14,11 +14,11 @@ const tests: [string, string, diagram.Diagram][] = [
         objectContaining({ type: 'class', id: 'B', name: 'B' }),
       ],
       links: [
-        {
+        objectContaining({
           type: 'link',
           left: { id: 'A' },
           right: { id: 'B' },
-        },
+        }),
       ],
     },
   ],
@@ -39,26 +39,26 @@ C -- D
         objectContaining({ type: 'class', id: 'D', name: 'D' }),
       ],
       links: [
-        {
+        objectContaining({
           type: 'link',
           left: { id: 'A' },
           right: { id: 'B' },
-        },
-        {
+        }),
+        objectContaining({
           type: 'link',
           left: { id: 'B' },
           right: { id: 'C' },
-        },
-        {
+        }),
+        objectContaining({
           type: 'link',
           left: { id: 'C' },
           right: { id: 'A' },
-        },
-        {
+        }),
+        objectContaining({
           type: 'link',
           left: { id: 'C' },
           right: { id: 'D' },
-        },
+        }),
       ],
     },
   ],

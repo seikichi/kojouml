@@ -92,6 +92,11 @@ function convertLink(link: diagram.Link): Edge {
       dir: 'both',
       arrowtail: convertLinkLeftHead(link.left.head),
       arrowhead: convertLinkRightHead(link.right.head),
+      style: link.line.char === '.' ? 'dashed' : 'solid',
+      label: link.label || '',
+      taillabel: link.left.cardinality || '',
+      headlabel: link.right.cardinality || '',
+      minlen: link.line.length,
     },
   };
 }
