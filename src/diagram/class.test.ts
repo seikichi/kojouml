@@ -1,7 +1,7 @@
 import * as parser from '../parser';
 import * as diagram from '.';
 
-// const { objectContaining } = expect;
+const { objectContaining } = expect;
 
 const tests: [string, string, diagram.Diagram][] = [
   [
@@ -33,8 +33,8 @@ ArrayList : size()
       links: [
         {
           type: 'link',
-          left: { id: 'Object' },
-          right: { id: 'ArrayList' },
+          left: objectContaining({ id: 'Object' }),
+          right: objectContaining({ id: 'ArrayList' }),
         },
       ],
     },

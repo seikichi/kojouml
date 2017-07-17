@@ -30,7 +30,7 @@ function mergeElemAndIds(vs: Array<[Element, number]>): [Element, number] {
 
 function mergeClass(left: Class, right: Class): Class {
   return {
-    type: 'class',
+    ...defaultClass,
     id: right.id || left.id,
     name: right.name || left.name,
     methods: _.uniqBy([...right.methods, ...left.methods], 'name'),
@@ -40,9 +40,18 @@ function mergeClass(left: Class, right: Class): Class {
 
 function convertLink(e: parser.Link): Link {
   return {
-    type: 'link',
-    left: { id: e.left.node.value },
-    right: { id: e.right.node.value },
+    ...defaultLink,
+    left: {
+      id: e.left.node.value,
+      head: e.left.head,
+      cardinality: e.left.cardinality,
+    },
+    right: {
+      id: e.right.node.value,
+      head: e.right.head,
+      cardinality: e.right.cardinality,
+    },
+    label: e.label,
   };
 }
 
@@ -51,7 +60,7 @@ function expand(elem: parser.Element): Element[] {
     case 'class':
       return [
         {
-          type: 'class',
+          ...defaultClass,
           id: elem.name,
           name: elem.name,
           methods: elem.methods,
@@ -62,8 +71,8 @@ function expand(elem: parser.Element): Element[] {
       const left = elem.left.node.value;
       const right = elem.right.node.value;
       return [
-        { type: 'class', id: left, name: left, methods: [], fields: [] },
-        { type: 'class', id: right, name: right, methods: [], fields: [] },
+        { ...defaultClass, id: left, name: left },
+        { ...defaultClass, id: right, name: right },
       ];
     default:
       return [];
@@ -95,18 +104,40 @@ export interface Class {
   readonly fields: ReadonlyArray<Field>;
 }
 
+export const defaultClass: Class = {
+  type: 'class',
+  id: '',
+  name: '',
+  methods: [],
+  fields: [],
+};
+
+export type LinkLeftHead = parser.LinkLeftHead;
+export type LinkRightHead = parser.LinkRightHead;
+
 export interface Link {
   readonly type: 'link';
   readonly left: {
     readonly id: Id;
     readonly cardinality?: string;
-    readonly head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#';
+    readonly head?: LinkLeftHead;
   };
   readonly right: {
     readonly id: Id;
     readonly cardinality?: string;
-    readonly head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#';
+    readonly head?: LinkRightHead;
   };
+  readonly label?: string;
 }
+
+export const defaultLink: Link = {
+  type: 'link',
+  left: {
+    id: '',
+  },
+  right: {
+    id: '',
+  },
+};
 
 export type Element = Class;

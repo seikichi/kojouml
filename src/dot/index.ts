@@ -9,13 +9,7 @@ export function show(graph: Graph): string {
 
 export function from(d: diagram.Diagram): Graph {
   const type = 'digraph';
-  const edges = _.chain(d.links)
-    .map((link: diagram.Link): Edge => ({
-      left: link.left.id,
-      right: link.right.id,
-      attributes: {},
-    }))
-    .value();
+  const edges = _.chain(d.links).map(convertLink).value();
   const nodes = _.chain(d.children).map(elemToNode).value();
 
   return { type, nodes, edges };
@@ -40,6 +34,66 @@ function showAttribuets(attrs: Attributes): string {
     })
     .join(',')
     .value();
+}
+
+function convertLinkLeftHead(head?: diagram.LinkLeftHead): string {
+  if (!head) {
+    return 'none';
+  }
+  switch (head) {
+    case '<|':
+      return 'onormal';
+    case '<':
+      return 'vee';
+    case '^':
+      return 'onormal';
+    case '+':
+      return 'odot';
+    case 'o':
+      return 'odiamond';
+    case 'x':
+      return 'crowvee';
+    case '*':
+      return 'diamond';
+    case '#':
+      return 'obox';
+  }
+}
+
+function convertLinkRightHead(head?: diagram.LinkRightHead): string {
+  if (!head) {
+    return 'none';
+  }
+  switch (head) {
+    case '|>':
+      return 'onormal';
+    case '>':
+      return 'vee';
+    case '^':
+      return 'onormal';
+    case '+':
+      return 'odot'; // TODO
+    case 'o':
+      return 'odiamond';
+    case 'x':
+      return 'crowvee'; // TODO
+    case '*':
+      return 'diamond';
+    case '#':
+      return 'obox';
+  }
+}
+
+function convertLink(link: diagram.Link): Edge {
+  return {
+    left: link.left.id,
+    right: link.right.id,
+    attributes: {
+      dir: 'both',
+      arrowtail: convertLinkLeftHead(link.left.head),
+      arrowhead: convertLinkRightHead(link.right.head),
+    },
+  };
 }
 
 function elemToNode(elem: diagram.Element): Node {

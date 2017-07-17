@@ -32,17 +32,20 @@ export interface IdentNode {
   readonly value: string;
 }
 
+export type LinkLeftHead = '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#';
+export type LinkRightHead = '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#';
+
 export interface Link {
   readonly type: 'link';
   readonly left: {
     readonly node: Node;
     readonly cardinality?: string;
-    readonly head?: '<|' | '<' | '^' | '+' | 'o' | 'x' | '*' | '#';
+    readonly head?: LinkLeftHead;
   };
   readonly right: {
     readonly node: Node;
     readonly cardinality?: string;
-    readonly head?: '|>' | '>' | '^' | '+' | 'o' | 'x' | '*' | '#';
+    readonly head?: LinkRightHead;
   };
   readonly line: {
     readonly char: '-' | '.' | '=';
