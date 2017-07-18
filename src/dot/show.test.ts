@@ -1,4 +1,4 @@
-import { show, Graph } from '.';
+import { show, Graph, defaultNode, defaultEdge } from '.';
 
 const tests: [string, Graph, string][] = [
   [
@@ -6,10 +6,18 @@ const tests: [string, Graph, string][] = [
     {
       type: 'digraph',
       nodes: [
-        { id: 'A', attributes: { shape: 'record' } },
-        { id: 'B', attributes: { shape: 'record' } },
+        {
+          ...defaultNode,
+          id: 'A',
+          attributes: { type: 'attributes', shape: 'record' },
+        },
+        {
+          ...defaultNode,
+          id: 'B',
+          attributes: { type: 'attributes', shape: 'record' },
+        },
       ],
-      edges: [{ left: 'A', right: 'B', attributes: {} }],
+      edges: [{ ...defaultEdge, left: 'A', right: 'B' }],
     },
     `
 digraph {

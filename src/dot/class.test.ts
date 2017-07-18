@@ -13,8 +13,10 @@ ArrayList : size()
       type: 'digraph',
       nodes: [
         {
+          ...dot.defaultNode,
           id: 'ArrayList',
           attributes: {
+            type: 'attributes',
             shape: 'record',
             label: `{ArrayList|Object[] elementData|size()}`,
           },
