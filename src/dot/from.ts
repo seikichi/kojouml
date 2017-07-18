@@ -100,7 +100,7 @@ function elemToNode(elem: diagram.Element): Node {
     attributes: {
       ...defaultAttributes,
       shape: 'record',
-      label: `{${elem.id}|${fields.join('\\l')}|${methods.join('\\l')}}`,
+      label: `{${elem.id}|${fields.join('\\l')}\\l|${methods.join('\\l')}\\l}`,
     },
   };
 }
