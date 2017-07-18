@@ -30,7 +30,7 @@ Footer = SP* '@enduml' Blanklines?
 Diagram = children:Element* {
   return { children: children };
 }
-Element = Emptyline* e:(Title / Caption / Comment / Member / Link) Blanklines? { return e; }
+Element = Emptyline* e:(Title / Caption / Comment / Member / Link / Class) Blanklines? { return e; }
 
 // Title
 Title = MultilineTitle / SinglelineTitle
@@ -85,6 +85,55 @@ MemberField = klass:AlphaNumericAscii+ SP* ':' SP* name:NotNewline+ {
     fields: [{ name: name.join('') }],
   };
 }
+
+// Class
+Class = ClassWithBody / ClassWithoutBody
+ClassMember = ClassMemberMethod / ClassMemberField
+
+ClassMemberMethod = SP* &((!Newline !'(' .)* '(') name:NotNewline+ {
+  return {
+    type: 'method',
+    name: name.join(''),
+  };
+}
+
+ClassMemberField = SP* name:NotNewline+ {
+  return {
+    type: 'field',
+    name: name.join(''),
+  };
+}
+
+ClassWithBody =
+  'class' SP* klass:AlphaNumericAscii+ SP* '{' SP* Blanklines
+  members:(!(SP* '}') ClassMember Blanklines )*
+  '}'
+{
+  var mems = mapByIndex(members, 1);
+  var fields = mems
+      .filter(function (m) { return m.type === 'field'})
+      .map(function (m) { return { name: m.name }; });
+  var methods = mems
+      .filter(function (m) { return m.type === 'method' })
+      .map(function (m) { return { name: m.name }; });
+
+  return {
+    type: 'class',
+    name: klass.join(''),
+    methods: methods,
+    fields: fields,
+  };
+}
+
+ClassWithoutBody = 'class' SP* klass:AlphaNumericAscii+ SP* {
+  return {
+    type: 'class',
+    name: klass.join(''),
+    methods: [],
+    fields: [],
+  };
+}
+
 
 // Link
 Link =
