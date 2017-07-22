@@ -18,7 +18,8 @@ ArrayList : size()
           attributes: {
             type: 'attributes',
             shape: 'record',
-            label: `{ArrayList|Object[] elementData|size()}`,
+            fontname: 'monospace',
+            label: `{ArrayList|Object[] elementData\\l|size()\\l}`,
           },
         },
       ],
