@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as diagram from '../diagram';
 
 import {
+  Attributes,
   Edge,
   Graph,
   Node,
@@ -14,8 +15,16 @@ export function from(d: diagram.Diagram): Graph {
   const type = 'digraph';
   const edges = _.chain(d.links).map(convertLink).value();
   const nodes = _.chain(d.children).map(convertElem).value();
+  const attributes: { graph: Attributes } = {
+    graph: {
+      type: 'attributes',
+      nodesep: 0.486111,
+      ranksep: 0.833333,
+      remincross: true,
+    },
+  };
 
-  return { type, nodes, edges };
+  return { type, attributes, nodes, edges };
 }
 
 function convertLinkLeftHead(head?: diagram.LinkLeftHead): string {
@@ -87,6 +96,7 @@ function convertLink(link: diagram.Link): Edge {
       taillabel: link.left.cardinality || '',
       headlabel: link.right.cardinality || '',
       minlen: link.line.length,
+      color: '#A80036',
     },
   };
 }
@@ -128,6 +138,9 @@ function convertElem(elem: diagram.Element): Node {
       width,
       height,
       label: `{${elem.id}|${fields.join('\\l')}\\l|${methods.join('\\l')}\\l}`,
+      style: 'filled',
+      fillcolor: '#FEFECE',
+      color: '#A80036',
     },
   };
 }
