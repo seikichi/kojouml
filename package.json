@@ -7,19 +7,13 @@
     "url": "https://github.com/seikichi/kojouml/issues"
   },
   "devDependencies": {
-    "@types/glob": "^5.0.30",
     "@types/jest": "^20.0.2",
     "@types/lodash": "^4.14.69",
     "@types/webpack": "^2.2.7",
     "@types/webpack-merge": "^0.0.4",
     "awesome-typescript-loader": "^3.0.8",
-    "del-cli": "^0.2.1",
-    "glob": "^7.1.1",
-    "in-publish": "^2.0.0",
     "jest": "^20.0.4",
     "lodash": "^4.17.4",
-    "mkdirp": "^0.5.1",
-    "npm-run-all": "^4.0.2",
     "pegjs": "^0.10.0",
     "pegjs-loader": "^0.5.0",
     "prettier": "^1.4.4",
@@ -29,8 +23,7 @@
     "typescript": "^2.4.1",
     "viz.js": "^1.7.0",
     "webpack": "^2.2.1",
-    "webpack-merge": "^3.0.0",
-    "webpack-node-externals": "^1.5.4"
+    "webpack-merge": "^3.0.0"
   },
   "files": [
     "bin",
@@ -63,12 +56,8 @@
     "url": "git+https://github.com/seikichi/kojouml.git"
   },
   "scripts": {
-    "build": "run-s -l clean build:scripts",
-    "build:scripts": "webpack",
-    "clean": "del-cli .nyc_output coverage src/**/*.js src/**/*.js.map test/**/*.js test/**/*.js.map",
-    "format": "prettier --single-quote --trailing-comma all test/hello.test.ts --write '{src,test}/**/*.ts'",
-    "prepublish": "in-publish && run-s build || not-in-publish",
-    "watch": "run-p -l watch:*",
-    "watch:scripts": "webpack --watch --config=webpack.config.test.ts"
+    "build": "webpack",
+    "format": "prettier --single-quote --trailing-comma all --write 'src/**/*.ts'",
+    "test": "jest"
   }
 }
