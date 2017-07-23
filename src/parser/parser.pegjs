@@ -70,10 +70,10 @@ MultilineComment = MultilineCommentBegin vs:(!MultilineCommentEnd .)+ MultilineC
 // Member
 Member = MemberMethod / MemberField
 
-MemberMethod = klass:AlphaNumericAscii+ SP* ':' SP* &((!Newline !'(' .)* '(') name:NotNewline+ {
+MemberMethod = klass:(!':' NotSpace)+ SP* ':' SP* &((!Newline !'(' .)* '(') name:NotNewline+ {
   return {
     type: 'class',
-    name: klass.join(''),
+    name: mapByIndex(klass, 1).join(''),
     methods: [{ name: name.join('') }],
     fields: [],
     parents: [],
@@ -81,10 +81,10 @@ MemberMethod = klass:AlphaNumericAscii+ SP* ':' SP* &((!Newline !'(' .)* '(') na
   };
 }
 
-MemberField = klass:AlphaNumericAscii+ SP* ':' SP* name:NotNewline+ {
+MemberField = klass:(!':' NotSpace)+ SP* ':' SP* name:NotNewline+ {
   return {
     type: 'class',
-    name: klass.join(''),
+    name: mapByIndex(klass, 1).join(''),
     methods: [],
     fields: [{ name: name.join('') }],
     parents: [],
