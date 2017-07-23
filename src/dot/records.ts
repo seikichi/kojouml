@@ -13,7 +13,7 @@ export interface Graph {
 
 export interface Attributes {
   readonly type: 'attributes';
-  readonly [key: string]: string | number;
+  readonly [key: string]: string | number | boolean;
 }
 
 export const defaultAttributes: Attributes = { type: 'attributes' };

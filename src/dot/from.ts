@@ -13,7 +13,7 @@ import {
 export function from(d: diagram.Diagram): Graph {
   const type = 'digraph';
   const edges = _.chain(d.links).map(convertLink).value();
-  const nodes = _.chain(d.children).map(elemToNode).value();
+  const nodes = _.chain(d.children).map(convertElem).value();
 
   return { type, nodes, edges };
 }
@@ -91,9 +91,32 @@ function convertLink(link: diagram.Link): Edge {
   };
 }
 
-function elemToNode(elem: diagram.Element): Node {
+function monospaceWidth(s: string, fontsize: number, inches: number): number {
+  const matches = s.match(/[\x00-\x7F]/g);
+  const half = matches ? matches.length : 0;
+  const full = s.length - half;
+
+  return full * fontsize / inches + half * 0.6 * fontsize / inches;
+}
+
+function convertElem(elem: diagram.Element): Node {
+  const inches = 72.0;
+  const fontsize = 14.0;
+
   const methods = elem.methods.map(e => e.name);
   const fields = elem.fields.map(f => f.name);
+
+  const widthList = [
+    monospaceWidth(elem.id, fontsize, inches),
+    ...elem.fields.map(f => monospaceWidth(f.name, fontsize, inches)),
+    ...elem.methods.map(m => monospaceWidth(m.name, fontsize, inches)),
+  ];
+
+  const [xmargin, ymargin] = [0.11, 0.055];
+  const rows = 1 + Math.max(methods.length, 1) + Math.max(fields.length, 1);
+  const width = _.max(widthList)! + 2 * xmargin;
+  const height = fontsize * rows / inches + (rows + 1) * ymargin;
+
   return {
     ...defaultNode,
     id: elem.id,
@@ -101,6 +124,9 @@ function elemToNode(elem: diagram.Element): Node {
       ...defaultAttributes,
       shape: 'record',
       fontname: 'monospace',
+      fixedsize: true,
+      width,
+      height,
       label: `{${elem.id}|${fields.join('\\l')}\\l|${methods.join('\\l')}\\l}`,
     },
   };
