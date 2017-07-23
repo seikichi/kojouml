@@ -1,17 +1,21 @@
 import { Diagram, parse } from '../../src/parser';
 
+const { objectContaining: oc } = expect;
+
 const tests: [string, string, Diagram][] = [
   [
     'simple link',
     'A -- B',
     {
       children: [
-        {
+        oc({
           type: 'link',
-          left: { node: { type: 'ident', value: 'A' } },
-          right: { node: { type: 'ident', value: 'B' } },
+          left: oc({
+            node: { type: 'ident', value: 'A' },
+          }),
+          right: oc({ node: { type: 'ident', value: 'B' } }),
           line: { char: '-', length: 2 },
-        },
+        }),
       ],
     },
   ],
@@ -20,13 +24,13 @@ const tests: [string, string, Diagram][] = [
     'A -- B : Hello, world!',
     {
       children: [
-        {
+        oc({
           type: 'link',
-          left: { node: { type: 'ident', value: 'A' } },
-          right: { node: { type: 'ident', value: 'B' } },
+          left: oc({ node: { type: 'ident', value: 'A' } }),
+          right: oc({ node: { type: 'ident', value: 'B' } }),
           line: { char: '-', length: 2 },
           label: 'Hello, world!',
-        },
+        }),
       ],
     },
   ],
@@ -35,12 +39,18 @@ const tests: [string, string, Diagram][] = [
     'A "1" -- "0..*" B',
     {
       children: [
-        {
+        oc({
           type: 'link',
-          left: { node: { type: 'ident', value: 'A' }, cardinality: '1' },
-          right: { node: { type: 'ident', value: 'B' }, cardinality: '0..*' },
+          left: oc({
+            node: { type: 'ident', value: 'A' },
+            cardinality: '1',
+          }),
+          right: oc({
+            node: { type: 'ident', value: 'B' },
+            cardinality: '0..*',
+          }),
           line: { char: '-', length: 2 },
-        },
+        }),
       ],
     },
   ],
@@ -49,12 +59,18 @@ const tests: [string, string, Diagram][] = [
     'A <--> B',
     {
       children: [
-        {
+        oc({
           type: 'link',
-          left: { node: { type: 'ident', value: 'A' }, head: '<' },
-          right: { node: { type: 'ident', value: 'B' }, head: '>' },
+          left: oc({
+            node: { type: 'ident', value: 'A' },
+            head: '<',
+          }),
+          right: oc({
+            node: { type: 'ident', value: 'B' },
+            head: '>',
+          }),
           line: { char: '-', length: 2 },
-        },
+        }),
       ],
     },
   ],
@@ -63,12 +79,12 @@ const tests: [string, string, Diagram][] = [
     'A -up- B',
     {
       children: [
-        {
+        oc({
           type: 'link',
-          left: { node: { type: 'ident', value: 'A' } },
-          right: { node: { type: 'ident', value: 'B' } },
+          left: oc({ node: { type: 'ident', value: 'A' } }),
+          right: oc({ node: { type: 'ident', value: 'B' } }),
           line: { char: '-', length: 2, direction: 'up' },
-        },
+        }),
       ],
     },
   ],

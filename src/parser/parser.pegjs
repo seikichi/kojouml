@@ -1,5 +1,7 @@
 // PlantUML Parser
 {
+  var _ = require('lodash');
+
   function mapByIndex(seq, index) {
     return seq.map(function (v) { return v[index]; });
   };
@@ -9,7 +11,7 @@ Main = Header diagram:Diagram Footer { return diagram; } / Diagram
 
 // Common
 EOF = !. { return ''; }
-SP = ' ' / '\t'
+SP = ' ' / '\t' / '\u00A0'
 Newline = '\n' / c1:'\r' c2:'\n'? { return c1 + c2 || ''; }
 Endline = Newline / EOF
 Emptyline = SP* Newline
@@ -74,6 +76,8 @@ MemberMethod = klass:AlphaNumericAscii+ SP* ':' SP* &((!Newline !'(' .)* '(') na
     name: klass.join(''),
     methods: [{ name: name.join('') }],
     fields: [],
+    parents: [],
+    interfaces: [],
   };
 }
 
@@ -83,57 +87,10 @@ MemberField = klass:AlphaNumericAscii+ SP* ':' SP* name:NotNewline+ {
     name: klass.join(''),
     methods: [],
     fields: [{ name: name.join('') }],
+    parents: [],
+    interfaces: [],
   };
 }
-
-// Class
-Class = ClassWithBody / ClassWithoutBody
-ClassMember = ClassMemberMethod / ClassMemberField
-
-ClassMemberMethod = SP* &((!Newline !'(' .)* '(') name:NotNewline+ {
-  return {
-    type: 'method',
-    name: name.join(''),
-  };
-}
-
-ClassMemberField = SP* name:NotNewline+ {
-  return {
-    type: 'field',
-    name: name.join(''),
-  };
-}
-
-ClassWithBody =
-  'class' SP* klass:AlphaNumericAscii+ SP* '{' SP* Blanklines
-  members:(!(SP* '}') ClassMember Blanklines )*
-  '}'
-{
-  var mems = mapByIndex(members, 1);
-  var fields = mems
-      .filter(function (m) { return m.type === 'field'})
-      .map(function (m) { return { name: m.name }; });
-  var methods = mems
-      .filter(function (m) { return m.type === 'method' })
-      .map(function (m) { return { name: m.name }; });
-
-  return {
-    type: 'class',
-    name: klass.join(''),
-    methods: methods,
-    fields: fields,
-  };
-}
-
-ClassWithoutBody = 'class' SP* klass:AlphaNumericAscii+ SP* {
-  return {
-    type: 'class',
-    name: klass.join(''),
-    methods: [],
-    fields: [],
-  };
-}
-
 
 // Link
 Link =
@@ -153,16 +110,16 @@ Link =
     type: 'link',
     left: {
       node: ln,
-      cardinality: lc || undefined,
-      head: lh || undefined,
+      cardinality: lc,
+      head: lh,
     },
     right: {
       node: rn,
-      cardinality: rc || undefined,
-      head: rh || undefined,
+      cardinality: rc,
+      head: rh,
     },
     line: line,
-    label: label || undefined,
+    label: label,
   };
 }
 LinkLabel = SP* ':' SP* cs:NotNewline+ { return cs.join(''); }
@@ -187,4 +144,152 @@ Line = LineWithDirection / SimpleLine
 
 Node = AlphaNumericAscii+ {
   return { type: 'ident', value: text() };
+}
+
+// Class
+Class = ClassWithBody / ClassWithoutBody
+
+ClassType =
+  'interface' /
+  'enum' /
+  'annotation' /
+  ('abstract' SP+ 'class') { return 'abstract class'; } /
+  'abstract' /
+  'class' /
+  'entity'
+
+ClassName =
+  cs:(!(SP / Newline / DoubleQuote / '{' / '}' / '<' / '>' / ',') .)+
+  {
+    return mapByIndex(cs, 1).join('');
+  }
+
+ClassNameList = head:ClassName tail:(SP* ',' SP* ClassName)* {
+  return [head].concat(mapByIndex(tail, 3));
+}
+
+ClassNameAndDisplayName =
+  display:DoubleQuotedString SP+ 'as' SP+ name:ClassName {
+    return { name: name, display: display };
+  } /
+  name:ClassName SP+ 'as' SP+ display:DoubleQuotedString {
+    return { name: name, display: display };
+  } /
+  name:DoubleQuotedString {
+    return { name: name, display: name };
+  } /
+  name:ClassName {
+    return { name: name, display: name };
+  }
+
+NotAngleBracket = c:(!'<' !'>' .) { return c[2]; }
+
+ClassGenericPattern = c:NotAngleBracket cs:(NotAngleBracket / '<' ClassGenericPattern '>')* {
+  return c + _.flatten(cs).join('');
+}
+
+ClassGeneric = SP* '<' p:ClassGenericPattern '>' {
+  return p;
+}
+
+ClassStereoType = SP* '<<' cs:(!'>>' .)+ '>>' {
+  return mapByIndex(cs, 1).join('');
+}
+
+ClassExtends = SP+ 'extends' SP+ klassList:ClassNameList {
+  return klassList;
+}
+
+ClassImplements = SP+ 'implements' SP+ klassList:ClassNameList {
+  return klassList;
+}
+
+ClassLineColor = SP* '##' style:('[' ('dotted' / 'dashed' / 'bold') ']')? color:NotSpace+ {
+  return {
+    style: style ? style[1] : null,
+    color: color.join(''),
+  };
+}
+
+ClassColor = SP* '#' color:NotSpace+ {
+  return {
+    name: color.join(''),
+  };
+}
+
+ClassWithoutBody =
+  type:ClassType
+  SP+ klass:ClassNameAndDisplayName
+  generic:ClassGeneric?
+  stereoType:ClassStereoType?
+  color:ClassColor?
+  lineColor:ClassLineColor?
+  parents:ClassExtends?
+  interfaces:ClassImplements?
+  {
+    return {
+      type: 'class',
+      subtype: type,
+      name: klass.name,
+      methods: [],
+      fields: [],
+      generic: generic,
+      stereoType: stereoType,
+      color: color,
+      lineColor: lineColor,
+      parents: parents || [],
+      interfaces: interfaces || [],
+    };
+  }
+
+ClassMember = ClassMemberMethod / ClassMemberField
+
+ClassMemberMethod = SP* &((!Newline !'(' .)* '(') name:NotNewline+ {
+  return {
+    type: 'method',
+    name: name.join(''),
+  };
+}
+
+ClassMemberField = SP* name:NotNewline+ {
+  return {
+    type: 'field',
+    name: name.join(''),
+  };
+}
+
+ClassWithBody =
+  type:ClassType
+  SP+ klass:ClassNameAndDisplayName
+  generic:ClassGeneric?
+  stereoType:ClassStereoType?
+  color:ClassColor?
+  lineColor:ClassLineColor?
+  parents:ClassExtends?
+  interfaces:ClassImplements?
+  SP* '{' SP* Blanklines
+  members:(!(SP* '}') ClassMember Blanklines )*
+  SP* '}'
+{
+  var mems = mapByIndex(members, 1);
+  var fields = mems
+      .filter(function (m) { return m.type === 'field'})
+      .map(function (m) { return { name: m.name }; });
+  var methods = mems
+      .filter(function (m) { return m.type === 'method' })
+      .map(function (m) { return { name: m.name }; });
+
+  return {
+    type: 'class',
+    subtype: type,
+    name: klass.name,
+    methods: methods,
+    fields: fields,
+    generic: generic,
+    stereoType: stereoType,
+    color: color,
+    lineColor: lineColor,
+    parents: parents || [],
+    interfaces: interfaces || [],
+  };
 }

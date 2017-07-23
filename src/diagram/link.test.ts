@@ -1,7 +1,7 @@
 import * as parser from '../parser';
 import * as diagram from '.';
 
-const { objectContaining } = expect;
+const { objectContaining: oc } = expect;
 
 const tests: [string, string, diagram.Diagram][] = [
   [
@@ -10,14 +10,14 @@ const tests: [string, string, diagram.Diagram][] = [
     {
       type: 'class_diagram',
       children: [
-        objectContaining({ type: 'class', id: 'A', name: 'A' }),
-        objectContaining({ type: 'class', id: 'B', name: 'B' }),
+        oc({ type: 'class', id: 'A', name: 'A' }),
+        oc({ type: 'class', id: 'B', name: 'B' }),
       ],
       links: [
-        objectContaining({
+        oc({
           type: 'link',
-          left: { id: 'A' },
-          right: { id: 'B' },
+          left: oc({ id: 'A' }),
+          right: oc({ id: 'B' }),
         }),
       ],
     },
@@ -33,31 +33,31 @@ C -- D
     {
       type: 'class_diagram',
       children: [
-        objectContaining({ type: 'class', id: 'A', name: 'A' }),
-        objectContaining({ type: 'class', id: 'B', name: 'B' }),
-        objectContaining({ type: 'class', id: 'C', name: 'C' }),
-        objectContaining({ type: 'class', id: 'D', name: 'D' }),
+        oc({ type: 'class', id: 'A', name: 'A' }),
+        oc({ type: 'class', id: 'B', name: 'B' }),
+        oc({ type: 'class', id: 'C', name: 'C' }),
+        oc({ type: 'class', id: 'D', name: 'D' }),
       ],
       links: [
-        objectContaining({
+        oc({
           type: 'link',
-          left: { id: 'A' },
-          right: { id: 'B' },
+          left: oc({ id: 'A' }),
+          right: oc({ id: 'B' }),
         }),
-        objectContaining({
+        oc({
           type: 'link',
-          left: { id: 'B' },
-          right: { id: 'C' },
+          left: oc({ id: 'B' }),
+          right: oc({ id: 'C' }),
         }),
-        objectContaining({
+        oc({
           type: 'link',
-          left: { id: 'C' },
-          right: { id: 'A' },
+          left: oc({ id: 'C' }),
+          right: oc({ id: 'A' }),
         }),
-        objectContaining({
+        oc({
           type: 'link',
-          left: { id: 'C' },
-          right: { id: 'D' },
+          left: oc({ id: 'C' }),
+          right: oc({ id: 'D' }),
         }),
       ],
     },

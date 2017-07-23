@@ -4,6 +4,14 @@ export interface Diagram {
 
 export type Element = Title | Caption | Comment | Link | Class;
 
+export function isClass(element: Element): element is Class {
+  return element.type === 'class';
+}
+
+export function isLink(element: Element): element is Link {
+  return element.type === 'link';
+}
+
 export interface Title {
   readonly type: 'title';
   readonly value: string;
@@ -75,16 +83,46 @@ export interface Field {
   readonly name: string;
 }
 
+export type LineStyle = 'dotted' | 'dashed' | 'bold';
+
+export interface LineColor {
+  readonly color: string;
+  readonly style?: LineStyle;
+}
+
+export interface Color {
+  readonly name: string;
+}
+
+export type ClassType =
+  | 'interface'
+  | 'enum'
+  | 'annotation'
+  | 'abstract class'
+  | 'abstract'
+  | 'class'
+  | 'entity';
+
 export interface Class {
   readonly type: 'class';
+  readonly subtype: ClassType;
   readonly name: string;
   readonly methods: ReadonlyArray<Method>;
   readonly fields: ReadonlyArray<Field>;
+  readonly generic?: string;
+  readonly stereoType?: string;
+  readonly color?: Color;
+  readonly lineColor?: LineColor;
+  readonly parents: ReadonlyArray<string>;
+  readonly interfaces: ReadonlyArray<string>;
 }
 
 export const defaultClass: Class = {
   type: 'class',
+  subtype: 'class',
   name: '',
   methods: [],
   fields: [],
+  parents: [],
+  interfaces: [],
 };

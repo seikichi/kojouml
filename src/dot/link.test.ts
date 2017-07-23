@@ -8,11 +8,11 @@ const tests: [string, string, dot.Graph][] = [
   [
     'simple link',
     'A -- B',
-    {
+    objectContaining({
       type: 'digraph',
       nodes: [objectContaining({ id: 'A' }), objectContaining({ id: 'B' })],
       edges: [objectContaining({ left: 'A', right: 'B' })],
-    },
+    }),
   ],
 ];
 

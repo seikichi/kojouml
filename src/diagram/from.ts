@@ -10,40 +10,46 @@ import {
   defaultLink,
 } from './records';
 
+interface WithIndex { index: number }
+
 export function from(d: parser.Diagram): Diagram {
   const type = 'class_diagram';
-  const children = _.chain(d.children)
-    .flatMap(expand)
-    .map((elem, index): [Element, number] => [elem, index])
-    .groupBy(([elem, _]) => elem.id)
+  const expanded = _.chain(d.children).flatMap(expand);
+
+  const children = _.chain(expanded)
+    .filter(parser.isClass)
+    .map(convertClass)
+    .map((elem, index) => ({ ...elem, index }))
+    .groupBy('name')
     .mapValues(mergeElemAndIds)
     .toArray()
-    .sortBy(([_, index]: [Element, number]) => index)
-    .map(([elem, _]: [Element, number]) => elem)
+    .sortBy('index')
+    .map(({ index: _, ...elem }) => elem as Class)
     .value();
 
-  const links = _.chain(d.children)
-    .filter((e: parser.Element) => e.type === 'link')
+  const links = _.chain(expanded)
+    .filter(parser.isLink)
     .map(convertLink)
     .value();
 
   return { type, children, links };
 }
 
-function mergeElemAndIds(vs: Array<[Element, number]>): [Element, number] {
-  return [
-    _.chain(vs).map(v => v[0]).reduce(mergeClass).value(),
-    _.min(_.map(vs, v => v[1])) as number,
-  ];
+function mergeElemAndIds(vs: Array<Element & WithIndex>): Element & WithIndex {
+  return _.reduce(vs, mergeClassWithIndex)!;
 }
 
-function mergeClass(left: Class, right: Class): Class {
+function mergeClassWithIndex(
+  left: Class & WithIndex,
+  right: Class & WithIndex,
+): Class & WithIndex {
   return {
     ...defaultClass,
     id: right.id || left.id,
     name: right.name || left.name,
     methods: _.uniqBy([...right.methods, ...left.methods], 'name'),
     fields: _.uniqBy([...right.fields, ...left.fields], 'name'),
+    index: Math.min(left.index, right.index),
   };
 }
 
@@ -68,24 +74,90 @@ function convertLink(e: parser.Link): Link {
   };
 }
 
-function expand(elem: parser.Element): Element[] {
+function convertClass(klass: parser.Class): Class {
+  return {
+    ...defaultClass,
+    id: klass.name,
+    name: klass.name,
+    methods: klass.methods,
+    fields: klass.fields,
+  };
+}
+
+function expand(elem: parser.Element): parser.Element[] {
   switch (elem.type) {
     case 'class':
-      return [
-        {
-          ...defaultClass,
-          id: elem.name,
-          name: elem.name,
-          methods: elem.methods,
-          fields: elem.fields,
+      const parents: parser.Class[] = elem.parents.map(p => ({
+        ...parser.defaultClass,
+        name: p,
+      }));
+      const extendsLinks = elem.parents.map((i): parser.Link => ({
+        type: 'link',
+        left: {
+          node: {
+            type: 'ident',
+            value: i,
+          },
+          head: '<|',
         },
+        right: {
+          node: {
+            type: 'ident',
+            value: elem.name,
+          },
+        },
+        line: {
+          char: '-',
+          length: 2,
+        },
+      }));
+
+      const interfaces: parser.Class[] = elem.interfaces.map(i => ({
+        ...parser.defaultClass,
+        name: i,
+      }));
+
+      const implementLinks = elem.interfaces.map((i): parser.Link => ({
+        type: 'link',
+        left: {
+          node: {
+            type: 'ident',
+            value: i,
+          },
+          head: '<|',
+        },
+        right: {
+          node: {
+            type: 'ident',
+            value: elem.name,
+          },
+        },
+        line: {
+          char: '.',
+          length: 2,
+        },
+      }));
+
+      return [
+        ...parents,
+        ...extendsLinks,
+        ...interfaces,
+        ...implementLinks,
+        elem,
       ];
     case 'link':
       const left = elem.left.node.value;
       const right = elem.right.node.value;
       return [
-        { ...defaultClass, id: left, name: left },
-        { ...defaultClass, id: right, name: right },
+        {
+          ...parser.defaultClass,
+          name: left,
+        },
+        {
+          ...parser.defaultClass,
+          name: right,
+        },
+        elem,
       ];
     default:
       return [];
