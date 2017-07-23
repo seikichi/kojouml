@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import * as diagram from '../diagram';
 
+import * as diagram from '../diagram';
 import {
   Attributes,
   Edge,

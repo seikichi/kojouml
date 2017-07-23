@@ -10,7 +10,9 @@ import {
   defaultLink,
 } from './records';
 
-interface WithIndex { index: number }
+interface WithIndex {
+  index: number;
+}
 
 export function from(d: parser.Diagram): Diagram {
   const type = 'class_diagram';
